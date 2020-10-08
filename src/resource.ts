@@ -1,0 +1,2 @@
+export const MONGO_CONNECTION_STRING:string = 'mongodb+srv://dbUser:1234567890@cluster0.dgt1z.mongodb.net/Twitter?retryWrites=true&w=majority'
+export const GOOGLE_CLIENT_ID:string = '1099211491116-vt95ia9ngmb7e5s0pva8qj80krfa9e37.apps.googleusercontent.com'
