@@ -72,7 +72,7 @@ export class MongoService {
     }
 
     async putMessage(messageId:string,message:MessageDto){
-        await this.messageModel.findOneAndUpdate({_id: messageId}, message);
+        await this.messageModel.findOneAndUpdate({_id: messageId}, {text:message.text});
         return this.messageModel.findOne({_id:messageId});
     }
 
