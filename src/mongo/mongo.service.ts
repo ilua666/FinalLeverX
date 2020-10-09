@@ -57,14 +57,28 @@ export class MongoService {
     }
 
 
-    async getUserMessages(id:string, limit:number, offset:number){
-        const objectId = new Types.ObjectId(id)
-        return this.messageModel.find({profile: id}).skip(offset).limit(limit);
+    async getUserMessages(profileId:string, limit:number, offset:number){
+        const objectId = new Types.ObjectId(profileId)
+        return this.messageModel.find({profile: objectId}).skip(offset).limit(limit);
     }
 
-    async createUserMessage(id:string, message:MessageDto){
-        const createdMessage = this.messageModel.create({text: message.text, profile: new Types.ObjectId(id)}) 
+    async getMessageById(messageId: string){
+        return this.messageModel.findById(messageId);
+    }
+
+    async createUserMessage(profileId:string, message:MessageDto){
+        const createdMessage = this.messageModel.create({text: message.text, profile: new Types.ObjectId(profileId)}) 
         return createdMessage;
+    }
+
+    async putMessage(messageId:string,message:MessageDto){
+        await this.messageModel.findOneAndUpdate({_id: messageId}, message);
+        return this.messageModel.findOne({_id:messageId});
+    }
+
+    async deleteMessage(messageId:string){
+        const ret = this.messageModel.deleteOne({_id:messageId});
+        return ret;
     }
 
 }

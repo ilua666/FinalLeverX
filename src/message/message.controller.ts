@@ -1,5 +1,5 @@
 import { MessageDto } from './message.dto';
-import { Controller, Delete, Get, Post, Put, UseGuards,Request, Param, Query, Body } from '@nestjs/common';
+import { Controller, Delete, Get, Post, Put, UseGuards,Request, Param, Query, Body, BadRequestException } from '@nestjs/common';
 import { query } from 'express';
 import { JwtAuthGuard } from 'src/auth/jwt-auth-guard';
 import { MessageService } from './message.service';
@@ -9,7 +9,8 @@ export class MessageController {
     constructor(private messageService:  MessageService){}
     @Get(':id')
     async getProfileMessages(@Param() params, @Query() query){
-        return this.messageService.getProfileMessages(params.id, query.limit, query.offset);
+        const res = await this.messageService.getProfileMessages(params.id, query.limit, query.offset);
+        return res;
     }
 
     @UseGuards(JwtAuthGuard)
@@ -19,8 +20,9 @@ export class MessageController {
     }
 
     @Get('one/:id')
-    async getMessangeById(){
-        //TODO
+    async getMessangeById(@Param() params){
+        const res = await this.messageService.getMessageById(params.id);
+        return res;
     }
 
     @UseGuards(JwtAuthGuard)
@@ -31,14 +33,22 @@ export class MessageController {
 
     @UseGuards(JwtAuthGuard)
     @Put()
-    async putMessange(){
-        //TODO
+    async putMessange(@Request()req, @Body() message:MessageDto, @Query() query){
+        if(!query.id){
+            throw new BadRequestException();
+        }
+        const ret = await this.messageService.putUserMessage(req.user.id, query.id ,message);
+        return ret;
     }
 
     @UseGuards(JwtAuthGuard)
     @Delete()
-    async deleteMessange(){
-        //TODO
+    async deleteMessange(@Request()req, @Query() query){
+        if(!query.id){
+            throw new BadRequestException();
+        }
+        const ret = await this.messageService.deleteMessage(req.user.id,query.id);
+        return ret
     }
 
 }
